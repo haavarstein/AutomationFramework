@@ -88,6 +88,12 @@
         [string]
         $GuestId
     )
+
+    Write-Verbose "Installing Modules" -Verbose 
+    if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
+    Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+    if (!(Get-Module -ListAvailable -Name VMware.PowerCLI)) {Install-Module -Name VMware.PowerCLI -AllowClobber}
+
     Write-Verbose "Importing VMware PowerCli Module" -Verbose
     Set-PowerCLIConfiguration -DisplayDeprecationWarnings 0 -Confirm:$false | out-null
     Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false | out-null    
@@ -100,3 +106,24 @@
     New-VM -Name $VMName -numcpu $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskStorageFormat $DiskType -Network $Network -DataStore $DataStore -GuestId $GuestId -ResourcePool $ResourceName -CD | Out-Null
     Get-VM $VMName | Get-CDDrive | Set-CDDrive -ISOPath $ISO -StartConnected:$true -Confirm:$false | out-null
 }
+
+$MyConfigFileloc = ("\\mdt-01\mdtproduction$\Applications\VMware.xml")
+[xml]$MyConfigFile = (Get-Content $MyConfigFileLoc)
+
+$VCenter = $MyConfigFile.Settings.VMware.VCenter
+$VCUser = $MyConfigFile.Settings.VMware.VCUser
+$VCPwd = $MyConfigFile.Settings.VMware.VCPwd
+$VMDiskType = $MyConfigFile.Settings.VMware.VMDiskType
+$VMDS = $MyConfigFile.Settings.VMware.VMDS
+$VMCluster = $MyConfigFile.Settings.VMware.VMCluster
+$VMFolder = $MyConfigFile.Settings.VMware.VMFolder
+$NICType = $MyConfigFile.Settings.VMware.NICType
+$NetName = $MyConfigFile.Settings.VMware.NetName
+$VMGuestOS = $MyConfigFile.Settings.VMware.VMGuestOS
+$ISO = $MyConfigFile.Settings.VMware.ISO
+$ESXi = $MyConfigFile.Settings.VMware.ESXi
+$vCPU = 2
+$VMName = "Test"
+
+New-VMware-VM -VMName $VMName -vCPU $vCPU -MemoryGB 4 -DiskGB 50 -DiskType $VMDiskType -Network $NetName -vCenter $VCenter -VCUser $VCUser -VCPwd $VCPwd -DataStore $VMDS -GuestId $VMGuestOS
+
