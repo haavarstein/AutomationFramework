@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Package</id>
+    <id>AutomationFramework</id>
     <version>1.0.0</version>
-    <authors>eric</authors>
-    <owners>eric</owners>
+    <authors>Trond Eirik Haavarstein</authors>
+    <owners>xenappblog LLC</owners>
     <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
     <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
     <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
