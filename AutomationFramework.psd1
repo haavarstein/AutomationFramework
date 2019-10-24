@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.0.5'
+ModuleVersion = '1.0.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -51,7 +51,7 @@ Description = 'Automation Framework PowerShell Module'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
- RequiredModules = @('AutomationFramework.psm1')
+# RequiredModules = @('')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
