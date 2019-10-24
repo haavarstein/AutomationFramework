@@ -51,7 +51,7 @@ Description = 'Automation Framework PowerShell Module'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+ RequiredModules = @('AutomationFramework.psm1')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -69,10 +69,10 @@ Description = 'Automation Framework PowerShell Module'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('New-VMware-VM','Get-RandomMAC-VMware')
+FunctionsToExport = @('New-VMwareVM','Get-RandomMAC')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+CmdletsToExport = @('New-VMwareVM','Get-RandomMAC')
 
 # Variables to export from this module
 VariablesToExport = '*'

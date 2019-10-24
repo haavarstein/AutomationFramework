@@ -1,4 +1,4 @@
-﻿ function New-VMware-VM {
+﻿ function New-VMwareVM {
     <#
     .SYNOPSIS
     Create a new VMware VM
@@ -97,17 +97,66 @@
     Get-VM $VMName | Get-CDDrive | Set-CDDrive -ISOPath $ISO -StartConnected:$true -Confirm:$false | out-null
 }
 
-Function Get-RandomMAC-VMware {
+Function Get-RandomMAC {
+    <#
+    .SYNOPSIS
+    Get a Random MAC Address based on the Machine Type Ex.VMware, Citrix, Nutanix, Microsoft
+    .DESCRIPTION
+    This function generates and retuns Random MAC Address based on the Machine Type. MachineType Parameter is Mandatory.
+    .LINK
+    Get-RandomMAC
+    .EXAMPLE
+    Get-RandomMAC -MachineType VMware
+    .EXAMPLE
+    Get-RandomMAC -MachineType Citrix
+     .EXAMPLE
+    Get-RandomMAC -MachineType Nutanix
+     .EXAMPLE
+    Get-RandomMAC -MachineType Microsoft
+    #>
 	[CmdletBinding()]
 	Param(
+        [Parameter(Mandatory=$True,HelpMessage='Machine Type Ex.VMware, Citrix, Nutanix, Microsoft')]
+        # Specifies the instance IDs of events in the 
+# event log. Get-PowerShellLog gets only logs
+# with the specified ID.
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $MachineType
+        ,
 		[Parameter()]
 		[string] $Separator = ":"
 	)
 
+    Switch ($MachineType)
+    {
+        {$_ -like 'Vmware'} 
+            {
+                $Prefix = [string]::join($Separator, @("00","50","56","00"))
+            }
+        {$_ -like 'Citrix'} 
+            {
+                $Prefix = [string]::join($Separator, @("06","91","C9","00"))
+            }
+        {$_ -like 'Nutanix'} 
+            {
+            $Prefix = [string]::join($Separator, @("50","6B","8D","00"))
+            }
+        {$_ -like 'Microsoft'} 
+            {
+            $Prefix = [string]::join($Separator, @("00","15","5D","00"))
+        }
+        default 
+            {
+            Write-Verbose "MachineType is not valid. Please use any value ex. VMware, Citrix, Nutanix, Microsoft " -Verbose
+            break
+        }
+    }
+
 	[string]::join($Separator, @(
 		# "Locally administered address"
 		# any of x2, x6, xa, xe
-		"00","50","56","00"
+		$Prefix
 		("{0:X2}" -f (Get-Random -Minimum 0 -Maximum 255)),
 		("{0:X2}" -f (Get-Random -Minimum 0 -Maximum 255))
 	))
