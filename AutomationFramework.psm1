@@ -117,9 +117,6 @@ Function Get-RandomMAC {
 	[CmdletBinding()]
 	Param(
         [Parameter(Mandatory=$True,HelpMessage='Machine Type Ex.VMware, Citrix, Nutanix, Microsoft')]
-        # Specifies the instance IDs of events in the 
-# event log. Get-PowerShellLog gets only logs
-# with the specified ID.
         [ValidateNotNullOrEmpty()]
         [string]
         $MachineType
@@ -161,3 +158,40 @@ Function Get-RandomMAC {
 		("{0:X2}" -f (Get-Random -Minimum 0 -Maximum 255))
 	))
 }
+
+Function Protect-Password{
+    <#
+    .SYNOPSIS
+    Encrpts the User's Password with AES Encrption Method
+    .DESCRIPTION
+    This function generates and retuns AES Encrpted Secure Password File & Secure Key File. Both Username & Password Parameters are Mandatory.
+    .LINK
+    Protect-Password
+    .EXAMPLE
+    Protect-Password -Username "TestUser" -Password "TestPassword"
+    #>
+	[CmdletBinding()]
+	Param(
+        [Parameter(Mandatory=$True,HelpMessage='Username')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $UserName
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Password')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Password
+		
+	)
+    Write-Verbose "Encrypting $Username's Password with AES Security Key" -Verbose
+    $SecureStringPwd = ConvertTo-SecureString $Password –asplaintext –force
+    $UserFile = $UserName + ".txt"
+    $KeyFile = $UserName + ".key"
+    $Key = New-Object Byte[] 16 
+    [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($Key)
+    $Key | out-file $KeyFile
+    $Encrypted = ConvertFrom-SecureString -SecureString $SecureStringPwd -Key $Key
+    $Encrypted | Set-Content $UserFile
+    Write-Verbose "$Username's Password is Encrypted with AES Security Key" -Verbose
+}
+
