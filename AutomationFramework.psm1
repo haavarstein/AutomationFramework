@@ -79,7 +79,7 @@
         $GuestId
     )
 
-    Write-Verbose "Installing Modules" -Verbose 
+    Write-Verbose "Installing VMware PowerCli Module" -Verbose 
     Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
     if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
     if (!(Get-Module -ListAvailable -Name VMware.PowerCLI)) {Install-Module -Name VMware.PowerCLI -AllowClobber}
