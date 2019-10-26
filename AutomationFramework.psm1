@@ -164,11 +164,11 @@ Function Protect-Password{
     .SYNOPSIS
     Encrpts the User's Password with AES Encrption Method
     .DESCRIPTION
-    This function generates and retuns AES Encrpted Secure Password File & Secure Key File. Both Username & Password Parameters are Mandatory.
+    This function generates and retuns AES Encrpted Secure Password File & Secure Key File.Username, Password, Output Parameters are Mandatory.
     .LINK
     Protect-Password
     .EXAMPLE
-    Protect-Password -Username "TestUser" -Password "TestPassword"
+    Protect-Password -Username "TestUser" -Password "TestPassword" -Output "TestFiles"
     #>
 	[CmdletBinding()]
 	Param(
@@ -181,17 +181,21 @@ Function Protect-Password{
         [ValidateNotNullOrEmpty()]
         [string]
         $Password
-		
+        ,
+		[Parameter(Mandatory=$True,HelpMessage='Output')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Output
 	)
     Write-Verbose "Encrypting $Username's Password with AES Security Key" -Verbose
     $SecureStringPwd = ConvertTo-SecureString $Password –asplaintext –force
-    $UserFile = $UserName + ".txt"
-    $KeyFile = $UserName + ".key"
+    $OutputFile = $Output + ".txt"
+    $KeyFile = $Output + ".key"
     $Key = New-Object Byte[] 16 
     [Security.Cryptography.RNGCryptoServiceProvider]::Create().GetBytes($Key)
     $Key | out-file $KeyFile
     $Encrypted = ConvertFrom-SecureString -SecureString $SecureStringPwd -Key $Key
-    $Encrypted | Set-Content $UserFile
-    Write-Verbose "$Username's Password is Encrypted with AES Security Key" -Verbose
+    $Encrypted | Set-Content $OutputFile
+    Write-Verbose "$Username's Password is Encrypted with AES Security Key in $OutputFile Files" -Verbose
 }
 
