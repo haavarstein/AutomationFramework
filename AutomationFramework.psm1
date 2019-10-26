@@ -1,15 +1,15 @@
-﻿ function New-VMwareVM {
+ function New-VMwareVM {
     <#
     .SYNOPSIS
     Create a new VMware VM
     .DESCRIPTION
     This function creates a VMware VM
     .LINK
-    New-VMware-VM
+    New-VMwareVM
     .EXAMPLE
-    New-VMware-VM -VMName $VMName -vCPU $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskType $VMDiskType -Network $NetName -vCenter $VCenter -VCUser $VCUser -VCPwd $VCPwd -DataStore $VMDS -GuestId $VMGuestOS
+    New-VMwareVM -VMName $VMName -vCPU $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskType $VMDiskType -Network $NetName -vCenter $VCenter -VCUser $VCUser -VCPwd $VCPwd -DataStore $VMDS -GuestId $VMGuestOS
     .EXAMPLE
-    New-VMware-VM -VMName $VMName -vCPU $vCPU -MemoryGB 4 -DiskGB 50 -DiskType $VMDiskType -ISO $ISO -Network $NetName -NetworkType $NICType -vCenter $VCenter -VCUser $VCUser -VCPwd $VCPwd -DataStore $VMDS -GuestId $VMGuestOS
+    New-VMwareVM -VMName $VMName -vCPU $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskType $VMDiskType -ISO $ISO -Network $NetName -NetworkType $NICType -vCenter $VCenter -VCUser $VCUser -VCPwd $VCPwd -DataStore $VMDS -GuestId $VMGuestOS
     #>
     [CmdletBinding()]
     param(
@@ -80,8 +80,8 @@
     )
 
     Write-Verbose "Installing Modules" -Verbose 
-    if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
     Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted
+    if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
     if (!(Get-Module -ListAvailable -Name VMware.PowerCLI)) {Install-Module -Name VMware.PowerCLI -AllowClobber}
 
     Write-Verbose "Importing VMware PowerCli Module" -Verbose
@@ -199,3 +199,45 @@ Function Protect-Password{
     Write-Verbose "$Username's Password is Encrypted with AES Security Key in $OutputFile Files" -Verbose
 }
 
+Function Set-SecureBoot {
+    <#
+    .SYNOPSIS Enable/Disable Seure Boot setting for a VM in vSphere 6.5
+    .NOTES  Author:  William Lam
+    .NOTES  Site:    www.virtuallyghetto.com
+    .PARAMETER Vm
+      VM to enable/disable Secure Boot
+    .EXAMPLE
+      Get-VM -Name Windows10 | Set-SecureBoot -Enabled
+    .EXAMPLE
+      Get-VM -Name Windows10 | Set-SecureBoot -Disabled
+    #>
+    param(
+        [Parameter(
+            Mandatory=$true,
+            ValueFromPipeline=$true,
+            ValueFromPipelineByPropertyName=$true)
+        ]
+        [VMware.VimAutomation.ViCore.Impl.V1.Inventory.InventoryItemImpl]$Vm,
+        [Switch]$Enabled,
+        [Switch]$Disabled
+     )
+
+    if($Enabled) {
+        $secureBootSetting = $true
+        $reconfigMessage = "Enabling Secure Boot for $Vm"
+    }
+    if($Disabled) {
+        $secureBootSetting = $false
+        $reconfigMessage = "Disabling Secure Boot for $Vm"
+    }
+
+    $spec = New-Object VMware.Vim.VirtualMachineConfigSpec
+    $bootOptions = New-Object VMware.Vim.VirtualMachineBootOptions
+    $bootOptions.EfiSecureBootEnabled = $secureBootSetting
+    $spec.BootOptions = $bootOptions
+  
+    #Write-Host "`n$reconfigMessage ..."
+    $task = $vm.ExtensionData.ReconfigVM_Task($spec)
+    $task1 = Get-Task -Id ("Task-$($task.value)")
+    $task1 | Wait-Task | Out-Null
+}
