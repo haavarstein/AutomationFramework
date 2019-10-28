@@ -306,10 +306,6 @@ function New-NutanixVM {
         $Container
         )
 
-    Write-Verbose "Importing Nutanix Module" -Verbose
-    Import-Module "C:\Program Files (x86)\Nutanix Inc\NutanixCmdlets\Modules\NutanixCmdletsPSSnapin.dll"
-    Add-PSSnapin nutanix*
-
     Write-Verbose "Connecting to Nutanix Cluster $CVM" -Verbose
     Connect-NTNXCluster -server $CVM -username $User -password $Password -AcceptInvalidSSLCerts -ForcedConnection | out-null
 
