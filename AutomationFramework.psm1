@@ -242,7 +242,8 @@ Function Set-SecureBoot {
     $task1 | Wait-Task | Out-Null
 }
 
-Create a new Nutanix VM
+Create a new Nutanix VM {
+    <#
     .DESCRIPTION
     This function creates a VMware VM
     .LINK
@@ -302,7 +303,8 @@ Create a new Nutanix VM
         [Parameter(Mandatory=$True,HelpMessage='Nutanix Container')]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Container)
+        $Container
+        )
 
     Write-Verbose "Importing Nutanix Module" -Verbose
     Import-Module "C:\Program Files (x86)\Nutanix Inc\NutanixCmdlets\Modules\NutanixCmdletsPSSnapin.dll"
@@ -327,7 +329,7 @@ Create a new Nutanix VM
     $diskcreatespec.sizeMb = $DiskMB
 
     # Creating the Disk
-    $vmDisk =  New-NTNXObject –Name VMDiskDTO
+    $vmDisk =  New-NTNXObject -Name VMDiskDTO
     $vmDisk.vmDiskCreate = $diskCreateSpec
 
     # Adding the Disk to the VM
