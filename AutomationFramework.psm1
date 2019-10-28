@@ -182,7 +182,7 @@ Function Protect-Password{
         [string]
         $Password
         ,
-	[Parameter(Mandatory=$True,HelpMessage='Output')]
+		[Parameter(Mandatory=$True,HelpMessage='Output')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Output
