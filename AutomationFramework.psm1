@@ -241,3 +241,123 @@ Function Set-SecureBoot {
     $task1 = Get-Task -Id ("Task-$($task.value)")
     $task1 | Wait-Task | Out-Null
 }
+
+Create a new Nutanix VM
+    .DESCRIPTION
+    This function creates a VMware VM
+    .LINK
+    New-NutanixVM
+    .EXAMPLE
+    New-NutanixVM -VMName $VMName -vCPU $vCPU -MemoryMB $MemoryMB -DiskMB $DiskMB -Container $Container -Network $Network -CVM $CVM -User $User -Pwd $Password -ISO $ISO
+    .EXAMPLE
+    New-NutanixVM -VMName Test2 -vCPU 2 -MemoryMB 2048 -DiskMB 50000 -Container $Container -Network $Network -CVM $CVM -User $User -Pwd $Password
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$True,HelpMessage='Name')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $VMName
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='vCPU')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $vCPU
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Memory (MB)')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $MemoryMB
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Disk (MB)')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $DiskMB
+        ,
+        [Parameter(Mandatory=$False,HelpMessage='ISO Image')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ISO
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Network')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Network
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Nutanix Controller VM')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $CVM
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Nutanix User')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $User
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Nutanix Password')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Pwd
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Nutanix Container')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Container)
+
+    Write-Verbose "Importing Nutanix Module" -Verbose
+    Import-Module "C:\Program Files (x86)\Nutanix Inc\NutanixCmdlets\Modules\NutanixCmdletsPSSnapin.dll"
+    Add-PSSnapin nutanix*
+
+    Write-Verbose "Connecting to Nutanix Cluster $CVM" -Verbose
+    Connect-NTNXCluster -server $CVM -username $User -password $Password -AcceptInvalidSSLCerts -ForcedConnection | out-null
+
+    New-NTNXVirtualMachine -Name $VMName -NumVcpus $vCPU -MemoryMb $MemoryMB | out-null
+
+    Start-Sleep -s 5
+
+    # Get the VmID of the VM
+    $vminfo = Get-NTNXVM | where {$_.vmName -eq $VMName}
+    $vmId = ($vminfo.vmid.split(":"))[2]
+
+    Start-Sleep -s 5
+
+    # Disk Creation
+    $diskCreateSpec = New-NTNXObject -Name VmDiskSpecCreateDTO
+    $diskcreatespec.containerName = "$Container"
+    $diskcreatespec.sizeMb = $DiskMB
+
+    # Creating the Disk
+    $vmDisk =  New-NTNXObject –Name VMDiskDTO
+    $vmDisk.vmDiskCreate = $diskCreateSpec
+
+    # Adding the Disk to the VM
+    Add-NTNXVMDisk -Vmid $vmId -Disks $vmDisk | Out-Null
+
+    # Set NIC for VM on default vlan (Get-NTNXNetwork -> NetworkUuid)
+    $VMMAC = Get-RandomMAC -MachineType Nutanix   
+    $nic = New-NTNXObject -Name VMNicSpecDTO
+    $nic.networkUuid = $Network
+    $nic.macAddress = $VMMAC
+    Add-NTNXVMNic -Vmid $vmId -SpecList $nic | Out-Null
+     
+    # Mount ISO Image
+    $diskCloneSpec = New-NTNXObject -Name VMDiskSpecCloneDTO
+    $ISOImage = (Get-NTNXImage | ?{$_.name -eq $ISO})
+    $diskCloneSpec.vmDiskUuid = $ISOImage.vmDiskId
+    
+    # Setup the new ISO disk from the Cloned Image
+    $vmISODisk = New-NTNXObject -Name VMDiskDTO
+    
+    # Specify that this is a CDrom
+    $vmISODisk.isCdrom = $true
+    $vmISODisk.vmDiskClone = $diskCloneSpec
+    $vmDisk = @($vmDisk)
+    $vmDisk += $vmISODisk
+
+    # Get the VmID of the VM
+    $vminfo = Get-NTNXVM | where {$_.vmName -eq $VMName}
+    $vmId = ($vminfo.vmid.split(":"))[2]
+
+    # Adding the Disk ^ ISO to the VM
+    Add-NTNXVMDisk -Vmid $vmId -Disks $vmDisk | Out-Null
+}
