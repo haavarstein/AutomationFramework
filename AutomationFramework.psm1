@@ -67,7 +67,7 @@
         [ValidateNotNullOrEmpty()]
         [string]
         $VCPwd
-                ,
+        ,
         [Parameter(Mandatory=$True,HelpMessage='vCenter Datastore')]
         [ValidateNotNullOrEmpty()]
         [string]
@@ -127,7 +127,7 @@ Function Get-RandomMAC {
 
     Switch ($MachineType)
     {
-        {$_ -like 'Vmware'} 
+        {$_ -like 'VMware'} 
             {
                 $Prefix = [string]::join($Separator, @("00","50","56","00"))
             }
@@ -182,7 +182,7 @@ Function Protect-Password{
         [string]
         $Password
         ,
-		[Parameter(Mandatory=$True,HelpMessage='Output')]
+	[Parameter(Mandatory=$True,HelpMessage='Output')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Output
