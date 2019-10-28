@@ -242,7 +242,7 @@ Function Set-SecureBoot {
     $task1 | Wait-Task | Out-Null
 }
 
-Create a new Nutanix VM {
+function New-Nutanixx {
     <#
     .DESCRIPTION
     This function creates a VMware VM
