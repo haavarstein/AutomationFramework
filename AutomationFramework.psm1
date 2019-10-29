@@ -188,7 +188,7 @@ Function Protect-Password{
         $Output
 	)
     Write-Verbose "Encrypting $Username's Password with AES Security Key" -Verbose
-    $SecureStringPwd = ConvertTo-SecureString $Password –asplaintext –force
+    $SecureStringPwd = ConvertTo-SecureString $Password -AsPlainText -Force
     $OutputFile = $Output + ".txt"
     $KeyFile = $Output + ".key"
     $Key = New-Object Byte[] 16 
