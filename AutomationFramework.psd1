@@ -12,7 +12,7 @@
  RootModule = 'AutomationFramework'
 
 # Version number of this module.
-ModuleVersion = '1.0.20'
+ModuleVersion = '1.0.21'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,10 +69,10 @@ Description = 'Automation Framework PowerShell Module'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('New-VMwareVM','Get-RandomMAC','Protect-Password','Set-SecureBoot','New-NutanixVM')
+FunctionsToExport = @('New-VMwareVM','Get-RandomMAC','Protect-Password','Set-SecureBoot','New-NutanixVM','New-HostingResource','New-HostingConnection','Update-DeliveryGroup','Rename-MachineCatalog’,’Remove-MachineCatalog’,’Export-MachineCatalog’,’ConvertTo-MachineCatalog’,’ConvertFrom-MachineCatalog’,’Sync-MachineCatalog’,’New-MachineCatalog')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @('New-VMwareVM','Get-RandomMAC','Protect-Password','Set-SecureBoot','New-NutanixVM')
+CmdletsToExport = @('New-VMwareVM','Get-RandomMAC','Protect-Password','Set-SecureBoot','New-NutanixVM','New-HostingResource','New-HostingConnection','Update-DeliveryGroup','Rename-MachineCatalog’,’Remove-MachineCatalog’,’Export-MachineCatalog’,’ConvertTo-MachineCatalog’,’ConvertFrom-MachineCatalog’,’Sync-MachineCatalog’,’New-MachineCatalog')
 
 # Variables to export from this module
 VariablesToExport = '*'
