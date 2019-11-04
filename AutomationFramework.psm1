@@ -360,7 +360,7 @@ function New-NutanixVM {
     Add-NTNXVMDisk -Vmid $vmId -Disks $vmDisk | Out-Null
 }
 
-function New-MachineCatalog {
+<#function New-MachineCatalog {
     <#
     .SYNOPSIS
     Creates a new catalog
@@ -409,7 +409,7 @@ function New-MachineCatalog {
     Update-DeliveryGroup
     .NOTES
     Thanks to Aaron Parker (@stealthpuppy) for the original code (http://stealthpuppy.com/xendesktop-mcs-machine-catalog-powershell/)
-    #>
+    
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True,HelpMessage='Name of the new catalog',ParameterSetName='Explicit')]
@@ -594,9 +594,10 @@ function New-MachineCatalog {
         Write-Debug ('[{0}] End' -f $MyInvocation.MyCommand)
     }
 }
+#>
 
-function Sync-MachineCatalog {
-    <#
+<#function Sync-MachineCatalog {
+    
     .SYNOPSIS
     Ensures the same amount of resource in the new broker catalog
     .DESCRIPTION
@@ -610,7 +611,7 @@ function Sync-MachineCatalog {
     Update-DeliveryGroup
     .EXAMPLE
     Sync-ProvVM -BrokerCatalog 'BrokenCatalog' -NewBrokerCatalog 'FixedBrokerCatalog'
-    #>
+   
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True,HelpMessage='The currently active broker catalog',ParameterSetName='Sync')]
@@ -665,9 +666,10 @@ function Sync-MachineCatalog {
         New-BrokerMachine -CatalogUid $BrokerCatalog.Uid -MachineName $ProvVM.ADAccountName -Verbose:$False | Out-Null
     }
 }
+ #>
 
-function ConvertFrom-MachineCatalog {
-    <#
+<#function ConvertFrom-MachineCatalog {
+    
     .SYNOPSIS
     Convert a broker catalog to a hash
     .DESCRIPTION
@@ -688,7 +690,7 @@ function ConvertFrom-MachineCatalog {
     ConvertFrom-MachineCatalog -BrokerCatalog (Get-BrokerCatalog)
     .EXAMPLE
     Get-BrokerCatalog | ConvertFrom-MachineCatalog
-    #>
+    
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True,HelpMessage='Collection of broker catalog to convert to a hash',ValueFromPipeline=$True,ValueFromPipelineByPropertyName=$True)]
@@ -772,6 +774,7 @@ function ConvertFrom-MachineCatalog {
         }
     }
 }
+#>
 
 function ConvertTo-MachineCatalog {
     <#
@@ -803,8 +806,8 @@ function ConvertTo-MachineCatalog {
     Get-Content -Path $Path | ConvertFrom-Csv | New-MachineCatalog
 }
 
-function Export-MachineCatalog {
-    <#
+<#function Export-MachineCatalog {
+    
     .SYNOPSIS
     Exports all broker catalogs to the specified CSV file
     .DESCRIPTION
@@ -817,7 +820,7 @@ function Export-MachineCatalog {
     New-MachineCatalog
     .EXAMPLE
     Export-MachineCatalog -Path .\Catalogs.csv
-    #>
+    
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True,HelpMessage='Path of the CSV file to export broker catalogs to')]
@@ -832,6 +835,7 @@ function Export-MachineCatalog {
 
     Get-BrokerCatalog | ConvertFrom-MachineCatalog | ConvertTo-Csv | Out-File -FilePath $Path
 }
+#>
 
 function Remove-MachineCatalog {
     <#
@@ -900,8 +904,8 @@ function Rename-MachineCatalog {
     Rename-AcctIdentityPool -IdentityPoolName       $Name -NewIdentityPoolName       $NewName
 }
 
-function Update-DeliveryGroup {
-    <#
+<#function Update-DeliveryGroup {
+    
     .SYNOPSIS
     Substitutes machines in a desktop group
     .DESCRIPTION
@@ -921,7 +925,7 @@ function Update-DeliveryGroup {
     .EXAMPLE
     The following command adds two machines from the given catalog to the specified desktop group
     Update-DeliveryGroup -Name 'DG-SessionHost' -CatalogName 'MCS-SessionHost' -Count 2
-    #>
+    
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$True,HelpMessage='Name of an existing desktop group')]
@@ -960,6 +964,7 @@ function Update-DeliveryGroup {
         New-BrokerHostingPowerAction -Action 'TurnOn' -MachineName $_.MachineName
     }
 }
+#>
 
 function New-HostingConnection {
     <#
