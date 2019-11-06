@@ -360,6 +360,24 @@ function New-NutanixVM {
     Add-NTNXVMDisk -Vmid $vmId -Disks $vmDisk | Out-Null
 }
 
+Function Get-VIARefTaskSequence
+{
+    Param(
+    $RefTaskSequenceFolder
+    )
+    $RefTaskSequences = Get-ChildItem $RefTaskSequenceFolder
+    Foreach($RefTaskSequence in $RefTaskSequences){
+        New-Object PSObject -Property @{ 
+        TaskSequenceID = $RefTaskSequence.ID
+        Name = $RefTaskSequence.Name
+        Comments = $RefTaskSequence.Comments
+        Version = $RefTaskSequence.Version
+        Enabled = $RefTaskSequence.enable
+        LastModified = $RefTaskSequence.LastModifiedTime
+        } 
+    }
+}
+
 function ConvertFrom-MachineCatalog {
     <#
     .SYNOPSIS
