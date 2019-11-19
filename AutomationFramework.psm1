@@ -496,11 +496,10 @@ function Set-Shortcut {
     .LINK
     Set-Shortcut
     
-    .EXAMPLE # 1
-    Set-Shortcut -SourceLnk "%windir%\system32\notepad.exe" -DestinationPath "%systemdrive%\Users\%username%\Desktop" -WorkingDirectory "%systemdrive%\Users\%username%\Desktop" -IconLocation "%windir%\system32\notepad.exe,0"
-    
-
-    .EXAMPLE # 2
+    .Example
+    Set-Shortcut -SourceLnk "C:\Temp\Notepad.lnk" -DestinationPath "%windir%\notepad.exe" -WorkingDirectory "%windir%" -IconLocation "%windir%\notepad.exe,0"
+   
+    .Example
     Set-Shortcut -SourceLnk $SourceLnk -DestinationPath $DestinationPath -WorkingDirectory $WorkingDirectory -IconLocation $IconLocation
     
     #>
