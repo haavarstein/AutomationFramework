@@ -484,3 +484,60 @@ function ConvertFrom-MachineCatalog {
         }
     }
 }
+
+function Set-Shortcut {
+<#
+    .SYNOPSIS
+    Creates Shortcut Link with Source Link & DestinationPath
+
+    .DESCRIPTION
+    This function Creates Shortcut Link with Source Link & DestinationPat. The function has 4 parameters SourceLnk, DestinationPath, WorkingDirectory, IconLocation
+    
+    .LINK
+    Set-Shortcut
+    
+    .EXAMPLE # 1
+    Set-Shortcut -SourceLnk "%windir%\system32\notepad.exe" -DestinationPath "%systemdrive%\Users\%username%\Desktop" -WorkingDirectory "%systemdrive%\Users\%username%\Desktop" -IconLocation "%windir%\system32\notepad.exe,0"
+    
+
+    .EXAMPLE # 2
+    Set-Shortcut -SourceLnk $SourceLnk -DestinationPath $DestinationPath -WorkingDirectory $WorkingDirectory -IconLocation $IconLocation
+    
+    #>
+    
+    [CmdletBinding()]
+
+    param ( 
+        [Parameter(Mandatory=$True,HelpMessage='SourceLnk')]
+        [ValidateNotNullOrEmpty()]
+        [string]$SourceLnk,
+        
+        [Parameter(Mandatory=$True,HelpMessage='DestinationPath')]
+        [ValidateNotNullOrEmpty()] 
+        [string]$DestinationPath, 
+
+        [Parameter(Mandatory=$True,HelpMessage='WorkingDirectory')]
+        [ValidateNotNullOrEmpty()]
+        [string]$WorkingDirectory,
+        
+        [Parameter(Mandatory=$True,HelpMessage='IconLocation')]
+        [ValidateNotNullOrEmpty()] 
+        [string]$IconLocation
+    )
+    
+    $WshShell = New-Object -comObject WScript.Shell
+    
+    $Shortcut = $WshShell.CreateShortcut($SourceLnk)
+    
+    $Shortcut.TargetPath = $DestinationPath
+    
+    if ($WorkingDirectory) { 
+        $Shortcut.WorkingDirectory = $WorkingDirectory 
+        }
+
+    if ($IconLocation) { 
+        $Shortcut.IconLocation = $IconLocation 
+        }
+    
+    $Shortcut.Save()
+}
