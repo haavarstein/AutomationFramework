@@ -433,3 +433,44 @@ function Set-Shortcut {
     
     $Shortcut.Save()
 }
+
+Function Open-Elevated{
+    <#
+    .SYNOPSIS
+    Run PowerShell Script Elevated - Username and Password are read from Settings.xml file - MDT Section
+    .DESCRIPTION
+    Run PowerShell Script Elevated - Username and Password are read from Settings.xml file - MDT Section
+    .LINK
+    Open-Elevated
+    .EXAMPLE
+    Open-Elevated -Path \\mdt-01\mdtproduction$\Applications\Misc\Putty -Script Install.ps1
+     .EXAMPLE
+    Open-Elevated -Path $Path -Script $Script
+    #>
+	[CmdletBinding()]
+	Param(
+        [Parameter(Mandatory=$True,HelpMessage='Path')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Path
+        ,
+        [Parameter(Mandatory=$True,HelpMessage='Script')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Script
+	)
+    
+    $MyConfigFileloc = ("$env:Settings\Applications\Settings.xml")
+    [xml]$MyConfigFile = (Get-Content $MyConfigFileLoc)
+
+    $ElevatedUser = $MyConfigFile.Settings.MDT.ElevatedUser
+    $PasswordFile = $MyConfigFile.Settings.MDT.PasswordFile
+    $KeyFile = $MyConfigFile.Settings.MDT.KeyFile
+
+    Write-Verbose "Getting Encrypted Password from KeyFile" -Verbose
+    $SecurePassword = ((Get-Content $PasswordFile) | ConvertTo-SecureString -Key (Get-Content $KeyFile))
+    $Credential = New-Object System.Management.Automation.PSCredential($ElevatedUser,$SecurePassword)
+
+    Write-Verbose "Running Elevated $Path\$Script" -Verbose
+    start-process -FilePath powershell.exe -WorkingDirectory $Path -Credential $Credential -ArgumentList "-noprofile -file ""$Path\$Script"" ""Goodbye"""
+}
