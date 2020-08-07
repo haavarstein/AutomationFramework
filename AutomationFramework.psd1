@@ -12,7 +12,7 @@
  RootModule = 'AutomationFramework'
 
 # Version number of this module.
-ModuleVersion = '1.0.27'
+ModuleVersion = '1.0.28'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Trond Eirik Haavarstein'
 CompanyName = 'xenappblog LLC'
 
 # Copyright statement for this module
-Copyright = '(c) 2019 xenappblog LLC. All rights reserved.'
+Copyright = '(c) 2020 xenappblog LLC. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'Automation Framework PowerShell Module'
