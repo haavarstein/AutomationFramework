@@ -72,6 +72,11 @@
         [ValidateNotNullOrEmpty()]
         [string]
         $DataStore
+	,
+        [Parameter(Mandatory=$True,HelpMessage='vCenter Cluster')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $VMCluster
         ,
         [Parameter(Mandatory=$True,HelpMessage='vCenter GuestOS')]
         [ValidateNotNullOrEmpty()]
@@ -91,9 +96,12 @@
 
     Write-Verbose "Connecting to vCenter $vCenter" -Verbose
     Connect-VIServer $vCenter -User $VCUser -Password $VCPwd | Out-Null
-    $Resource = Get-ResourcePool
-    $ResourceName = $Resource.Name
-    New-VM -Name $VMName -numcpu $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskStorageFormat $DiskType -Network $Network -DataStore $DataStore -GuestId $GuestId -ResourcePool $ResourceName -CD | Out-Null
+    #$Resource = Get-ResourcePool
+    #$ResourceName = $Resource.Name
+    #New-VM -Name $VMName -numcpu $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskStorageFormat $DiskType -Network $Network -DataStore $DataStore -GuestId $GuestId -ResourcePool $ResourceName -CD | Out-Null
+    
+    $ESXi = Get-Cluster $VMCluster | Get-VMHost -state connected | Get-Random
+    New-VM -Name $VMName -numcpu $vCPU -MemoryGB $MemoryGB -DiskGB $DiskGB -DiskStorageFormat $DiskType -Network $Network -DataStore $DataStore -GuestId $GuestId -VMHost $ESXi -CD | Out-Null
     Get-VM $VMName | Get-CDDrive | Set-CDDrive -ISOPath $ISO -StartConnected:$true -Confirm:$false | out-null
 }
 
